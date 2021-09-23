@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"time"
 
 	"github.com/go-git/go-git/v5"
@@ -29,6 +30,7 @@ func main() {
 		TimeFormat: time.RFC3339,
 		NoColor:    false,
 	})
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	// Get list of URLs to clone
 	var errCount int
@@ -41,26 +43,20 @@ func main() {
 	os.Exit(errCount)
 }
 
+func sanitize(path string) string {
+
+	pattern := ".git$"
+
+	if m, err := regexp.MatchString( pattern, path); m {
+		return path[0 : len(path)-4]
+	} else if err != nil {
+		log.Error().Err(err).Msgf("weird error trying to match '%s' against regexp '%s'", path, pattern)
+	}
+	return path
+}
+
 func processUrl(gitUrl string) error {
 	log.Info().Msgf("processing %s", gitUrl)
-
-	// Save the current working directory, so we can make sure that we change back here.
-	// Do the chdir in a deferred closure
-	if savedWD, err := os.Getwd(); err != nil {
-		log.Error().Err(err).Msg("cannot determine current directory name")
-		return err
-	} else {
-
-		// Change back to the saved working directory
-		defer func(s string) {
-
-			if cerr := os.Chdir(s); cerr != nil {
-				log.Error().Err(cerr).Msgf("cannot change back to %s", s)
-			}
-
-		}(savedWD)
-
-	}
 
 	url, err := gitUrls.Parse(gitUrl)
 	if err != nil {
@@ -72,6 +68,7 @@ func processUrl(gitUrl string) error {
 	}
 
 	dir, file := filepath.Split(url.Path)
+	log.Debug().Msgf("url is %+v", *url)
 	log.Debug().Msgf("path is '%s', dir is '%s', and file is '%s'", url.Path, dir, file)
 
 	if dir[0] == filepath.Separator {
@@ -80,25 +77,15 @@ func processUrl(gitUrl string) error {
 
 	log.Debug().Msgf("----- dir is now '%s' ----------------------", dir)
 
-	// Create the directory or directories
-	if merr := os.MkdirAll(dir, 0755); merr != nil {
-		log.Error().Err(merr).Msgf("cannot create dirs '%s'", dir)
-		return merr
-	}
 
-	/*
-	// Change to the directory
-	if cdErr := os.Chdir(dir); cdErr != nil {
-		log.Error().Err(cdErr).Msgf("cannot change to new directory '%s'", dir)
-		return cdErr
-	}
+	// See if the path ends with .git, and if so, remove that before cloning
+	clonePath := sanitize( url.Path )
 
-	 */
 
-	log.Info().Msgf("Cloning repo %s into %s", gitUrl, dir)
+	log.Info().Msgf("Cloning repo %s into %s", gitUrl, clonePath)
 
 	// Clone the repository
-	if _, gErr := git.PlainClone(dir, false, &git.CloneOptions{URL: gitUrl, Progress: os.Stderr}); gErr != nil {
+	if _, gErr := git.PlainClone(clonePath, false, &git.CloneOptions{URL: gitUrl, Progress: os.Stderr}); gErr != nil {
 		log.Error().Err(gErr).Msgf("cannot clone repo %s", gitUrl)
 		return gErr
 	}
