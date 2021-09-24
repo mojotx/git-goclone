@@ -8,7 +8,10 @@ func TestMsg(t *testing.T) {
 
 	initMap()
 
+	Debug("This is a test of the debug command")
+
 	for i, k := range ColorMapKeys {
 		Msg(ColorMap[k], "%d: This is a sample %s message\n", i, k)
 	}
+
 }

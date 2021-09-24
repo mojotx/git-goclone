@@ -10,4 +10,29 @@ will create the directory structure based on the url path.
 I used to use a shell script version of this, but rewrote it in Go
 to make it more robust.
 
+## Installation
+
+To install this, use the following command:
+
+```
+    go get github.com/mojotx/git-goclone
+```
+
+
+## Usage
+
+Once the utility is installed, you can use it by giving one or more
+Git URIs on a command-line.
+
+For example:
+
+```
+    $ git goclone https://github.com/mojotx/git-goclone.git
+    processing https://github.com/mojotx/git-goclone.git...
+    Cloning repo https://github.com/mojotx/git-goclone.git into mojotx/git-goclone...
+    Enumerating objects: 28, done.
+    Counting objects: 100% (28/28), done.
+    Compressing objects: 100% (19/19), done.
+    Total 28 (delta 7), reused 28 (delta 7), pack-reused 0
+```
 

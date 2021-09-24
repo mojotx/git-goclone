@@ -33,6 +33,13 @@ func Info(f string, a ...interface{}) {
 
 }
 
+// Debug is a wrapper around the Msg() function, which is a wrapper around fmt.Printf()
+// The function prints the text, but using the terminal color code for Black.
+func Debug(f string, a ...interface{}) {
+	initMap()
+	Msg(Black, f, a...)
+}
+
 // Msg is a wrapper around fmt.Printf() that takes a color code sequence as the first parameter.
 // It also prints the Reset string at the end of the function.
 func Msg(color string, f string, a ...interface{}) {
