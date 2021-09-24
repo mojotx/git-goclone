@@ -15,7 +15,7 @@ to make it more robust.
 To install this, use the following command:
 
 ```
-    go get github.com/mojotx/git-goclone
+    go install github.com/mojotx/git-goclone@latest
 ```
 
 
