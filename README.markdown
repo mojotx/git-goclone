@@ -1,4 +1,5 @@
 # git go-clone
+![Coverage](https://img.shields.io/badge/Coverage-84.3%25-brightgreen)
 
 This is fancy wrapper around `git clone` that preserves
 directory structures.
