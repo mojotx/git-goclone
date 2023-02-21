@@ -71,7 +71,7 @@ func initMap() {
 		ColorMap["Reset"] = Reset
 	}
 	if len(ColorMapKeys) == 0 {
-		ColorMapKeys = make([]string, 10, 10)
+		ColorMapKeys = make([]string, 10)
 		ColorMapKeys[0] = "Black"
 		ColorMapKeys[1] = "Red"
 		ColorMapKeys[2] = "Green"
