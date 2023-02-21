@@ -2,8 +2,6 @@ name: Generate code coverage badge
 
 on:
   push:
-    tags:
-      - v*
     branches:
       - master
       - main
