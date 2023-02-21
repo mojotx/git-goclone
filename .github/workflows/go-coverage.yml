@@ -41,6 +41,7 @@ jobs:
       - name: Go Coverage Badge  # Pass the `coverage.out` output to this action
         uses: tj-actions/coverage-badge-go@v2
         with:
+          target: README.markdown
           filename: coverage.out
 
       - name: Verify Changed files
@@ -54,7 +55,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add README.md
+          git add README.markdown
           git commit -m "chore: Updated coverage badge."
 
       - name: Push changes
