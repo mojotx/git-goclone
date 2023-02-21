@@ -5,9 +5,10 @@ import (
 	"os"
 
 	"github.com/go-git/go-git/v5"
+	gitUrls "github.com/whilp/git-urls"
+
 	"github.com/mojotx/git-goclone/pkg/msg"
 	"github.com/mojotx/git-goclone/pkg/path"
-	gitUrls "github.com/whilp/git-urls"
 )
 
 func main() {
