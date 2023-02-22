@@ -1,4 +1,5 @@
 # git go-clone
+
 ![Coverage](https://img.shields.io/badge/Coverage-84.3%25-brightgreen)
 
 This is fancy wrapper around `git clone` that preserves
@@ -15,10 +16,9 @@ to make it more robust.
 
 To install this, use the following command:
 
-```
+```shell
     go install github.com/mojotx/git-goclone@latest
 ```
-
 
 ## Usage
 
@@ -27,7 +27,7 @@ Git URIs on a command-line.
 
 For example:
 
-```
+```text
     $ git goclone https://github.com/mojotx/git-goclone.git
     processing https://github.com/mojotx/git-goclone.git...
     Cloning repo https://github.com/mojotx/git-goclone.git into mojotx/git-goclone...
@@ -36,4 +36,3 @@ For example:
     Compressing objects: 100% (19/19), done.
     Total 28 (delta 7), reused 28 (delta 7), pack-reused 0
 ```
-
