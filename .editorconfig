@@ -12,6 +12,8 @@ charset = utf-8
 indent_size = 4
 indent_style = space
 
-# 4 space indentation
+[{*.yml,*.yaml}]
+indent_size = 2
+
 [{*.go,go.mod,go.sum,.gitmodules}]
 indent_style = tab
