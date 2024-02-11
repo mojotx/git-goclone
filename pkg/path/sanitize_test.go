@@ -2,6 +2,8 @@ package path
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestPreTrim(t *testing.T) {
@@ -12,9 +14,8 @@ func TestPreTrim(t *testing.T) {
 	TestData["\\abcdef"] = "abcdef"
 
 	for k := range TestData {
-		if result := PreTrim(k); result != TestData[k] {
-			t.Errorf("PreTrim: expected '%s', got '%s'", TestData[k], result)
-		}
+		result := PreTrim(k)
+		assert.Equalf(t, result, TestData[k], "PreTrim: expected '%s', got '%s'", TestData[k], result)
 	}
 }
 
@@ -24,9 +25,8 @@ func TestPostTrim(t *testing.T) {
 	TestData["mojotx/git-goclone.git"] = "mojotx/git-goclone"
 	TestData["mojotx/git-goclone"] = "mojotx/git-goclone"
 	for k := range TestData {
-		if result := PostTrim(k); result != TestData[k] {
-			t.Errorf("PostTrim: expected '%s', got '%s'", TestData[k], result)
-		}
+		result := PostTrim(k)
+		assert.Equalf(t, result, TestData[k], "PostTrim: expected '%s', got '%s'", TestData[k], result)
 	}
 }
 
@@ -43,8 +43,7 @@ func TestSanitize(t *testing.T) {
 	TestData[`\mojotx\git-goclone`] = `mojotx\git-goclone`
 	TestData[`mojotx\git-goclone`] = `mojotx\git-goclone`
 	for k := range TestData {
-		if result := Sanitize(k); result != TestData[k] {
-			t.Errorf("Sanitize: expected '%s', got '%s'", TestData[k], result)
-		}
+		result := Sanitize(k)
+		assert.Equalf(t, result, TestData[k], "Sanitize: expected '%s', got '%s'", TestData[k], result)
 	}
 }
