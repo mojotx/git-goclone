@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/go-git/go-git/v5"
-	gitUrls "github.com/whilp/git-urls"
+	gitUrls "github.com/mojotx/git-urls"
 
 	"github.com/mojotx/git-goclone/pkg/path"
 
