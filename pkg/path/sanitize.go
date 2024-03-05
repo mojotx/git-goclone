@@ -16,8 +16,9 @@ func PostTrim(path string) string {
 	// Match \.git$ on the end
 	gitPattern := regexp.MustCompile(`.git$`)
 
-	if gitPattern.MatchString(path) {
-		return path[0 : len(path)-4]
+	// Find the start and end indices of the pattern
+	if indices := gitPattern.FindStringIndex(path); indices != nil {
+		path = path[:indices[0]]
 	}
 
 	return path
@@ -27,10 +28,11 @@ func PostTrim(path string) string {
 func PreTrim(path string) string {
 
 	// Check to see if the first character is a path separator, and if so, remove it
-	pathPattern := regexp.MustCompile(`^[/\\]`)
+	pathPattern := regexp.MustCompile(`^[/\\]*`)
 
-	if pathPattern.MatchString(path) {
-		path = path[1:]
+	// Find the start and end indices of the pattern
+	if indices := pathPattern.FindStringIndex(path); indices != nil {
+		path = path[indices[1]:]
 	}
 
 	return path

@@ -6,44 +6,130 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestPreTrim(t *testing.T) {
-	TestData := make(map[string]string)
-	TestData["/abc/def"] = "abc/def"
-	TestData["/abcdef"] = "abcdef"
-	TestData["\\abc\\def"] = "abc\\def"
-	TestData["\\abcdef"] = "abcdef"
+func TestSanitize(t *testing.T) {
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{
+			name: "Remove leading slash",
+			path: "/example",
+			want: "example",
+		},
+		{
+			name: "Remove leading backslash",
+			path: "\\example",
+			want: "example",
+		},
+		{
+			name: "No leading separator",
+			path: "example",
+			want: "example",
+		},
+		{
+			name: "Remove .git suffix",
+			path: "example.git",
+			want: "example",
+		},
+		{
+			name: "No .git suffix",
+			path: "example",
+			want: "example",
+		},
+		{
+			name: "Empty string",
+			path: "",
+			want: "",
+		},
+		{
+			name: "forward slash multi",
+			path: "/mojotx/git-goclone.git",
+			want: "mojotx/git-goclone",
+		},
+		{
+			name: "backslash multi",
+			path: "\\mojotx\\git-goclone.git",
+			want: "mojotx\\git-goclone",
+		},
+		{
+			name: "mixed format",
+			path: "\\/mojotx\\/git-goclone.git",
+			want: "mojotx\\/git-goclone",
+		},
+	}
 
-	for k := range TestData {
-		result := PreTrim(k)
-		assert.Equalf(t, result, TestData[k], "PreTrim: expected '%s', got '%s'", TestData[k], result)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := Sanitize(tt.path)
+			assert.Equalf(t, got, tt.want, "Sanitize: expected '%s', got '%s'", tt.want, got)
+		})
+	}
+}
+
+func TestPreTrim(t *testing.T) {
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{
+			name: "Remove leading slash",
+			path: "/example",
+			want: "example",
+		},
+		{
+			name: "Remove leading backslash",
+			path: "\\example",
+			want: "example",
+		},
+		{
+			name: "No leading separator",
+			path: "example",
+			want: "example",
+		},
+		{
+			name: "Empty string",
+			path: "",
+			want: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := PreTrim(tt.path)
+			assert.Equalf(t, got, tt.want, "PreTrim: expected '%s', got '%s'", tt.want, got)
+		})
 	}
 }
 
 func TestPostTrim(t *testing.T) {
-	TestData := make(map[string]string)
-
-	TestData["mojotx/git-goclone.git"] = "mojotx/git-goclone"
-	TestData["mojotx/git-goclone"] = "mojotx/git-goclone"
-	for k := range TestData {
-		result := PostTrim(k)
-		assert.Equalf(t, result, TestData[k], "PostTrim: expected '%s', got '%s'", TestData[k], result)
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{
+			name: "Remove .git suffix",
+			path: "example.git",
+			want: "example",
+		},
+		{
+			name: "No .git suffix",
+			path: "example",
+			want: "example",
+		},
+		{
+			name: "Empty string",
+			path: "",
+			want: "",
+		},
 	}
-}
 
-func TestSanitize(t *testing.T) {
-	TestData := make(map[string]string)
-
-	TestData["/mojotx/git-goclone.git"] = "mojotx/git-goclone"
-	TestData["mojotx/git-goclone.git"] = "mojotx/git-goclone"
-	TestData["/mojotx/git-goclone"] = "mojotx/git-goclone"
-	TestData["mojotx/git-goclone"] = "mojotx/git-goclone"
-
-	TestData[`\mojotx\git-goclone.git`] = `mojotx\git-goclone`
-	TestData[`mojotx\git-goclone.git`] = `mojotx\git-goclone`
-	TestData[`\mojotx\git-goclone`] = `mojotx\git-goclone`
-	TestData[`mojotx\git-goclone`] = `mojotx\git-goclone`
-	for k := range TestData {
-		result := Sanitize(k)
-		assert.Equalf(t, result, TestData[k], "Sanitize: expected '%s', got '%s'", TestData[k], result)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := PostTrim(tt.path)
+			assert.Equalf(t, got, tt.want, "PostTrim: expected '%s', got '%s'", tt.want, got)
+		})
 	}
 }
