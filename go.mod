@@ -2,7 +2,7 @@ module github.com/mojotx/git-goclone
 
 go 1.22
 
-toolchain go1.22.2
+toolchain go1.22.0
 
 require (
 	github.com/go-git/go-git/v5 v5.12.0
