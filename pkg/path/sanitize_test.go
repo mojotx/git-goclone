@@ -8,9 +8,10 @@ import (
 
 func TestSanitize(t *testing.T) {
 	tests := []struct {
-		name string
-		path string
-		want string
+		name      string
+		path      string
+		want      string
+		wantError bool
 	}{
 		{
 			name: "Remove leading slash",
@@ -40,7 +41,7 @@ func TestSanitize(t *testing.T) {
 		{
 			name: "Empty string",
 			path: "",
-			want: "",
+			want: ".",
 		},
 		{
 			name: "forward slash multi",
@@ -57,12 +58,27 @@ func TestSanitize(t *testing.T) {
 			path: "\\/mojotx\\/git-goclone.git",
 			want: "mojotx\\/git-goclone",
 		},
+		{
+			name:      "path traversal attack",
+			path:      "../../etc/passwd",
+			wantError: true,
+		},
+		{
+			name:      "path traversal with .git",
+			path:      "../../../.ssh/authorized_keys.git",
+			wantError: true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got := Sanitize(tt.path)
-			assert.Equalf(t, got, tt.want, "Sanitize: expected '%s', got '%s'", tt.want, got)
+			got, err := Sanitize(tt.path)
+			if tt.wantError {
+				assert.Error(t, err, "Sanitize should return error for: %s", tt.path)
+			} else {
+				assert.NoError(t, err, "Sanitize should not return error for: %s", tt.path)
+				assert.Equalf(t, tt.want, got, "Sanitize: expected '%s', got '%s'", tt.want, got)
+			}
 		})
 	}
 }
