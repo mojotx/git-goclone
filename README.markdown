@@ -1,6 +1,6 @@
 # git go-clone
 
-![Coverage](https://img.shields.io/badge/Coverage-72.7%25-brightgreen)
+![Coverage](https://img.shields.io/badge/Coverage-83.7%25-brightgreen)
 [![CodeQL](https://github.com/mojotx/git-goclone/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/mojotx/git-goclone/actions/workflows/codeql-analysis.yml)
 [![golangci-lint](https://github.com/mojotx/git-goclone/actions/workflows/golangci-lint.yml/badge.svg)](https://github.com/mojotx/git-goclone/actions/workflows/golangci-lint.yml)
 
