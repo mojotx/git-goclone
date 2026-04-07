@@ -39,9 +39,9 @@ func TestSanitize(t *testing.T) {
 			want: "example",
 		},
 		{
-			name: "Empty string",
-			path: "",
-			want: ".",
+			name:      "Empty string",
+			path:      "",
+			wantError: true,
 		},
 		{
 			name: "forward slash multi",

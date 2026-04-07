@@ -150,28 +150,14 @@ func processUrl(gitUrl string, parser GitURLsParser, cloner GitCloner) error {
 	case <-ctx.Done():
 		err := fmt.Errorf("clone timeout after 5 minutes")
 		log.Error().Err(err).Str("url", redactedURL).Str("clonePath", clonePath).Msg("cannot clone repo")
+		// Clean up any partially cloned directory left on disk
+		if removeErr := os.RemoveAll(clonePath); removeErr != nil {
+			log.Warn().Err(removeErr).Str("clonePath", clonePath).Msg("failed to remove partial clone after timeout")
+		}
 		return err
 	}
 
 	return nil
-}
-
-// MockGitURLsParser is a mock for gitUrls.Parse
-type MockGitURLsParser struct {
-	ParseFunc func(string) (*url.URL, error)
-}
-
-func (m *MockGitURLsParser) Parse(gitUrl string) (*url.URL, error) {
-	return m.ParseFunc(gitUrl)
-}
-
-// MockGitCloner is a mock for git.PlainClone
-type MockGitCloner struct {
-	PlainCloneFunc func(path string, isBare bool, options *git.CloneOptions) (*git.Repository, error)
-}
-
-func (m *MockGitCloner) PlainClone(path string, isBare bool, options *git.CloneOptions) (*git.Repository, error) {
-	return m.PlainCloneFunc(path, isBare, options)
 }
 
 // RealGitURLsParser is a real implementation of the GitURLsParser interface.

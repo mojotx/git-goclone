@@ -47,8 +47,10 @@ func Sanitize(path string) (string, error) {
 	// Build the absolute path to verify it's under CWD
 	absPath := filepath.Join(cwd, cleaned)
 
-	// Ensure the resolved path is still under the working directory
-	if !strings.HasPrefix(absPath, cwd) {
+	// Ensure the resolved path is still under the working directory.
+	// Use cwd+separator to avoid a prefix collision where cwd="/tmp/work"
+	// would incorrectly match absPath="/tmp/workstuff".
+	if !strings.HasPrefix(absPath, cwd+string(filepath.Separator)) {
 		return "", fmt.Errorf("path escapes working directory: %s", path)
 	}
 
