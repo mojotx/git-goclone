@@ -59,7 +59,7 @@ do not stop the others.`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			logger := newLogger(logOut, quiet)
 
-			var progress io.Writer = logOut
+			progress := logOut
 			if quiet {
 				progress = io.Discard
 			}
