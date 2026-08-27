@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -91,19 +90,8 @@ func TestExitCodeError(t *testing.T) {
 func TestExecute_NoArgsReturnsOne(t *testing.T) {
 	t.Parallel()
 
-	origStderr := os.Stderr
-	r, w, err := os.Pipe()
-	require.NoError(t, err)
-	os.Stderr = w
-	t.Cleanup(func() { os.Stderr = origStderr })
-
-	origArgs := os.Args
-	os.Args = []string{"git-goclone"}
-	t.Cleanup(func() { os.Args = origArgs })
-
-	code := Execute()
-	_ = w.Close()
-	out, _ := io.ReadAll(r)
+	var stderr bytes.Buffer
+	code := execute(&stderr, []string{})
 	assert.Equal(t, 1, code)
-	assert.Contains(t, string(out), "Error:")
+	assert.Contains(t, stderr.String(), "Error:")
 }

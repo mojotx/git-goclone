@@ -18,7 +18,14 @@ import (
 
 // Execute builds and runs the root command, returning the process exit code.
 func Execute() int {
-	cmd := NewRootCmd(os.Stderr)
+	return execute(os.Stderr, os.Args[1:])
+}
+
+// execute is the testable core of Execute, with the process globals injected.
+func execute(stderr io.Writer, args []string) int {
+	cmd := NewRootCmd(stderr)
+	cmd.SetArgs(args)
+	cmd.SetErr(stderr)
 	err := cmd.Execute()
 	if err == nil {
 		return 0
@@ -30,7 +37,7 @@ func Execute() int {
 		return int(exit)
 	}
 	// Usage / flag errors: cobra silenced them, so surface here.
-	fmt.Fprintln(os.Stderr, "Error:", err)
+	fmt.Fprintln(stderr, "Error:", err)
 	return 1
 }
 
