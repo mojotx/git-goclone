@@ -17,3 +17,6 @@ indent_size = 2
 
 [{*.go,go.mod,go.sum,.gitmodules}]
 indent_style = tab
+
+[{*.md,*.markdown}]
+trim_trailing_whitespace = false
