@@ -6,7 +6,7 @@ toolchain go1.26.1
 
 require (
 	github.com/go-git/go-git/v5 v5.19.2
-	github.com/mojotx/git-urls v1.0.4
+	github.com/mojotx/git-urls v1.0.6
 	github.com/rs/zerolog v1.35.1
 	github.com/spf13/cobra v1.10.2
 	github.com/stretchr/testify v1.12.1
