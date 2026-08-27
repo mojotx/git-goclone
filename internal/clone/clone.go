@@ -101,12 +101,14 @@ func URLWith(
 	return nil
 }
 
-// redact returns rawURL with any embedded password replaced. Falls back to a
-// placeholder if the URL cannot be parsed at all.
+// redact returns rawURL with any embedded password replaced. It understands
+// both standard URL syntax and SCP-style SSH URLs (git@host:path).
 func redact(rawURL string) string {
-	u, err := url.Parse(rawURL)
-	if err != nil {
-		return "[unparseable URL]"
+	if u, err := gitUrls.Parse(rawURL); err == nil {
+		return u.Redacted()
 	}
-	return u.Redacted()
+	if u, err := url.Parse(rawURL); err == nil {
+		return u.Redacted()
+	}
+	return "[unparseable URL]"
 }

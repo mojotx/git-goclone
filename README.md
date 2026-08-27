@@ -9,8 +9,8 @@ that mirrors the URL path — so cloning
 `https://gitlab.com/company/department/project.git` lands in
 `./company/department/project` rather than `./project`.
 
-I use this to keep hundreds of repositories organised across GitHub, GitLab
-and internal hosts without having to `mkdir -p` beforehand.
+I have used this for years to keep all of my repositories organised across
+GitHub, GitLab and internal hosts without having to `mkdir -p` beforehand.
 
 ## Installation
 
@@ -32,15 +32,29 @@ $ git goclone https://github.com/mojotx/git-goclone.git
 Multiple URLs may be given; each is cloned independently, and the process
 exits with a non-zero status if any of them failed.
 
+### Supported URL forms
+
+| Form             | Example                                       |
+| ---------------- | --------------------------------------------- |
+| HTTPS            | `https://github.com/mojotx/git-goclone.git`   |
+| HTTPS with creds | `https://user:token@github.com/org/repo.git`  |
+| SSH (`ssh://`)   | `ssh://git@github.com/mojotx/git-goclone.git` |
+| SSH (SCP-style)  | `git@github.com:mojotx/git-goclone.git`       |
+| Git protocol     | `git://github.com/mojotx/git-goclone.git`     |
+
+SSH authentication uses your running SSH agent (`$SSH_AUTH_SOCK`); the host
+must already be present in `~/.ssh/known_hosts`. There is no
+`--ssh-key` / `-i` flag yet — PRs welcome.
+
 ### Flags
 
-| Flag          | Default | Description                             |
-| ------------- | ------- | --------------------------------------- |
-| `--depth`     | `1`     | Clone depth. `0` requests full history. |
-| `--timeout`   | `5m`    | Per-URL clone timeout.                  |
-| `-q, --quiet` | `false` | Suppress logs and git progress output.  |
-| `--version`   |         | Print version and exit.                 |
-| `-h, --help`  |         | Print help and exit.                    |
+| Flag          | Default | Description                                     |
+| ------------- | ------- | ----------------------------------------------- |
+| `--depth`     | `0`     | Clone depth. `0` = full history; `1` = shallow. |
+| `--timeout`   | `5m`    | Per-URL clone timeout.                          |
+| `-q, --quiet` | `false` | Suppress logs and git progress output.          |
+| `--version`   |         | Print version and exit.                         |
+| `-h, --help`  |         | Print help and exit.                            |
 
 Passwords embedded in URLs are redacted from all log output.
 

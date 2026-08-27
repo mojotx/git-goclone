@@ -83,7 +83,7 @@ do not stop the others.`,
 		},
 	}
 
-	cmd.Flags().IntVar(&depth, "depth", 1, "clone depth; 0 for full history")
+	cmd.Flags().IntVar(&depth, "depth", 0, "clone depth; 0 for full history, e.g. 1 for a shallow clone")
 	cmd.Flags().DurationVar(&timeout, "timeout", 5*time.Minute, "per-URL clone timeout")
 	cmd.Flags().BoolVarP(&quiet, "quiet", "q", false, "suppress logs and git progress output")
 

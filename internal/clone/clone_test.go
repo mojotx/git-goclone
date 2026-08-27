@@ -139,7 +139,9 @@ func TestRedact(t *testing.T) {
 		{"with password", "https://user:secret@example.com/x", "xxxxx", "secret"},
 		{"only username", "https://user@example.com/x", "user@example.com", ""},
 		{"no credentials", "https://example.com/x", "example.com", ""},
-		{"unparseable", "ht!tp://bad", "unparseable", ""},
+		{"scp-style ssh", "git@github.com:mojotx/git-goclone.git", "mojotx/git-goclone.git", ""},
+		{"ssh scheme", "ssh://git@github.com/mojotx/git-goclone.git", "git@github.com", ""},
+		{"ssh with password", "ssh://user:secret@host/repo.git", "xxxxx", "secret"},
 	}
 	for _, tt := range tests {
 		tt := tt
