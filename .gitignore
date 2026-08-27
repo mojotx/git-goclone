@@ -1,2 +1,10 @@
-git-goclone
-!*/git-goclone
+# Built binary
+/git-goclone
+
+# Test / coverage output
+/coverage.out
+/coverage_badge.png
+
+# Editor / index cruft
+/.csearchindex
+/.vscode/
