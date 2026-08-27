@@ -37,7 +37,7 @@ func execute(stderr io.Writer, args []string) int {
 		return int(exit)
 	}
 	// Usage / flag errors: cobra silenced them, so surface here.
-	fmt.Fprintln(stderr, "Error:", err)
+	_, _ = fmt.Fprintln(stderr, "Error:", err)
 	return 1
 }
 
