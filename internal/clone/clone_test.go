@@ -131,8 +131,8 @@ func TestRedact(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name  string
-		in    string
+		name            string
+		in              string
 		wantContains    string
 		wantNotContains string
 	}{
