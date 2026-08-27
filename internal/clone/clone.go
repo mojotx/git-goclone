@@ -74,6 +74,10 @@ func URLWith(
 		logger.Error().Str("url", redacted).Str("dest", dest).Msg("destination already exists")
 		return fmt.Errorf("destination already exists: %s", dest)
 	}
+	if err := clonepath.ValidateWithinCWD(dest); err != nil {
+		logger.Error().Err(err).Str("url", redacted).Str("dest", dest).Msg("destination escaped working directory")
+		return err
+	}
 
 	logger.Info().Str("url", redacted).Str("dest", dest).Int("depth", opts.Depth).Msg("cloning")
 

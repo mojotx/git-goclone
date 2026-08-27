@@ -58,6 +58,12 @@ must already be present in `~/.ssh/known_hosts`. There is no
 
 Passwords embedded in URLs are redacted from all log output.
 
+## Security notes
+
+The tool derives a checkout path from the Git URL and validates that the final destination stays inside the current working directory before cloning. It rejects obvious traversal attempts, rejects absolute paths, and resolves symlinks/canonical paths to block directory escape via link-based tricks.
+
+This is intended to protect the local filesystem when cloning from untrusted or malformed repository URLs. The code also performs a final destination re-check immediately before the clone call to reduce the remaining TOCTOU window.
+
 ## Project layout
 
 ```text

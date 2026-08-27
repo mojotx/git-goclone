@@ -1,9 +1,12 @@
 package clonepath
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSanitize(t *testing.T) {
@@ -43,6 +46,86 @@ func TestSanitize(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestSanitize_RejectsSymlinkEscape(t *testing.T) {
+	root := t.TempDir()
+	actual := t.TempDir()
+	require.NoError(t, os.Symlink(actual, filepath.Join(root, "escape")))
+
+	origWD, err := os.Getwd()
+	require.NoError(t, err)
+	require.NoError(t, os.Chdir(root))
+	t.Cleanup(func() { _ = os.Chdir(origWD) })
+
+	_, err = Sanitize("escape/repo.git")
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "outside")
+}
+
+func TestSanitize_ResolvesExistingPathWithinCWD(t *testing.T) {
+	root := t.TempDir()
+	origWD, err := os.Getwd()
+	require.NoError(t, err)
+	require.NoError(t, os.Chdir(root))
+	t.Cleanup(func() { _ = os.Chdir(origWD) })
+
+	got, err := Sanitize("org/team/proj.git")
+	require.NoError(t, err)
+	assert.Equal(t, filepath.Join("org", "team", "proj"), got)
+}
+
+func TestValidateWithinCWD_RejectsRuntimeSymlinkEscape(t *testing.T) {
+	root := t.TempDir()
+	outside := t.TempDir()
+	origWD, err := os.Getwd()
+	require.NoError(t, err)
+	require.NoError(t, os.Chdir(root))
+	t.Cleanup(func() { _ = os.Chdir(origWD) })
+
+	require.NoError(t, os.MkdirAll(filepath.Join("org"), 0o755))
+	require.NoError(t, ValidateWithinCWD(filepath.Join("org", "proj")))
+
+	require.NoError(t, os.RemoveAll(filepath.Join("org")))
+	require.NoError(t, os.Symlink(outside, filepath.Join("org")))
+
+	err = ValidateWithinCWD(filepath.Join("org", "proj"))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "outside working directory")
+}
+
+func TestValidateWithinCWD_RejectsUnsafeInputs(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		dest string
+	}{
+		{name: "empty", dest: ""},
+		{name: "absolute", dest: "/tmp/escape"},
+		{name: "traversal", dest: "../../etc/passwd"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			err := ValidateWithinCWD(tt.dest)
+			require.Error(t, err)
+		})
+	}
+}
+
+func TestResolveCanonicalPathAndWithinDir(t *testing.T) {
+	root := t.TempDir()
+	resolved, err := resolveCanonicalPath(root, filepath.Join(root, "org", "repo"))
+	require.NoError(t, err)
+	assert.Equal(t, filepath.Join(root, "org", "repo"), resolved)
+
+	_, err = resolveCanonicalPath(root, filepath.Join(root, "..", "outside"))
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "outside")
+
+	assert.True(t, isWithinDir(root, filepath.Join(root, "org", "repo")))
+	assert.False(t, isWithinDir(root, filepath.Join(root, "..", "outside")))
 }
 
 func TestTrimGitSuffix(t *testing.T) {

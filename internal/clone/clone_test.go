@@ -30,6 +30,29 @@ func chdirTemp(t *testing.T) string {
 	return dir
 }
 
+func TestURL_UsesDefaultDependencies(t *testing.T) {
+	chdirTemp(t)
+
+	origParser, origCloner := DefaultURLParser, DefaultCloner
+	t.Cleanup(func() {
+		DefaultURLParser = origParser
+		DefaultCloner = origCloner
+	})
+
+	DefaultURLParser = func(string) (*url.URL, error) {
+		return &url.URL{Path: "/org/team/proj.git"}, nil
+	}
+	DefaultCloner = func(_ context.Context, path string, isBare bool, o *git.CloneOptions) (*git.Repository, error) {
+		assert.Equal(t, filepath.Join("org", "team", "proj"), path)
+		assert.False(t, isBare)
+		assert.Equal(t, 3, o.Depth)
+		return nil, nil
+	}
+
+	err := URL(context.Background(), silentLogger(), "https://x/org/team/proj.git", Options{Depth: 3})
+	require.NoError(t, err)
+}
+
 func TestURLWith_ParseError(t *testing.T) {
 	parse := func(string) (*url.URL, error) { return nil, errors.New("boom") }
 	clone := func(context.Context, string, bool, *git.CloneOptions) (*git.Repository, error) {
@@ -142,6 +165,7 @@ func TestRedact(t *testing.T) {
 		{"scp-style ssh", "git@github.com:mojotx/git-goclone.git", "mojotx/git-goclone.git", ""},
 		{"ssh scheme", "ssh://git@github.com/mojotx/git-goclone.git", "git@github.com", ""},
 		{"ssh with password", "ssh://user:secret@host/repo.git", "xxxxx", "secret"},
+		{"git protocol", "git://github.com/mojotx/git-goclone.git", "github.com", ""},
 	}
 	for _, tt := range tests {
 		tt := tt
