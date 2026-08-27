@@ -1,88 +1,88 @@
 name: CI
 
 on:
-    push:
-        branches: [main]
-        tags: ["v*"]
-    pull_request:
-        branches: [main]
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+    branches: [main]
 
 # Cancel superseded runs on the same ref (e.g. force-pushes to a PR branch).
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 # Least privilege at the workflow level; jobs elevate only what they need.
 permissions: {}
 
 jobs:
-    test:
-        name: Build & test
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v6
+  test:
+    name: Build & test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
-            - name: Set up Go
-              uses: actions/setup-go@v6
-              with:
-                  go-version-file: go.mod
-                  check-latest: true
-                  cache: true
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
 
-            - name: Verify modules are tidy
-              run: |
-                  go mod tidy
-                  git diff --exit-code -- go.mod go.sum
+      - name: Verify modules are tidy
+        run: |
+          go mod tidy
+          git diff --exit-code -- go.mod go.sum
 
-            - name: Build
-              run: go build ./...
+      - name: Build
+        run: go build ./...
 
-            - name: Vet
-              run: go vet ./...
+      - name: Vet
+        run: go vet ./...
 
-            - name: Test
-              run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
+      - name: Test
+        run: go test -race -covermode=atomic -coverprofile=coverage.out ./...
 
-            - name: Coverage summary
-              if: always()
-              run: |
-                  {
-                    echo "### Coverage"
-                    echo
-                    echo '```'
-                    go tool cover -func=coverage.out
-                    echo '```'
-                  } >> "$GITHUB_STEP_SUMMARY"
+      - name: Coverage summary
+        if: always()
+        run: |
+          {
+            echo "### Coverage"
+            echo
+            echo '```'
+            go tool cover -func=coverage.out
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
-            - name: Upload coverage artifact
-              if: always()
-              uses: actions/upload-artifact@v5
-              with:
-                  name: coverage
-                  path: coverage.out
-                  if-no-files-found: error
-                  retention-days: 14
+      - name: Upload coverage artifact
+        if: always()
+        uses: actions/upload-artifact@v5
+        with:
+          name: coverage
+          path: coverage.out
+          if-no-files-found: error
+          retention-days: 14
 
-    lint:
-        name: golangci-lint
-        runs-on: ubuntu-latest
-        permissions:
-            contents: read
-        steps:
-            - name: Checkout
-              uses: actions/checkout@v6
+  lint:
+    name: golangci-lint
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
 
-            - name: Set up Go
-              uses: actions/setup-go@v6
-              with:
-                  go-version-file: go.mod
-                  check-latest: true
-                  cache: false # the lint action manages its own cache
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: false # the lint action manages its own cache
 
-            - name: golangci-lint
-              uses: golangci/golangci-lint-action@v9
-              with:
-                  version: latest
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: latest
