@@ -3,7 +3,6 @@
 [![CI](https://github.com/mojotx/git-goclone/actions/workflows/ci.yml/badge.svg)](https://github.com/mojotx/git-goclone/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/mojotx/git-goclone/actions/workflows/codeql.yml/badge.svg)](https://github.com/mojotx/git-goclone/actions/workflows/codeql.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mojotx/git-goclone.svg)](https://pkg.go.dev/github.com/mojotx/git-goclone)
-[![Go Report Card](https://goreportcard.com/badge/github.com/mojotx/git-goclone)](https://goreportcard.com/report/github.com/mojotx/git-goclone)
 
 This is a small Git wrapper that clones repositories into a directory tree
 that mirrors the URL path — so cloning
